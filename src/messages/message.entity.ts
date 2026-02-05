@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Attachment } from 'src/attachment/attachment.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 @Entity({ name: 'messages' })
 export class Message {
@@ -7,6 +8,9 @@ export class Message {
 
   @Column({ type: 'text' })
   content: string;
+
+  @OneToMany(() => Attachment, att => att.message, { cascade: true })
+  attachments: Attachment[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
