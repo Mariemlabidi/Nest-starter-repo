@@ -4,18 +4,27 @@ import { Repository } from 'typeorm';
 import { Message } from './message.entity';
 import { CreateMessageDto } from './dtos/create-message.dto';
 import { UpdateMessageDto } from './dtos/update-message.dto';
+import { NotificationsQueue } from 'src/queue/notifications.queue';
 
 @Injectable()
 export class MessagesService {
   constructor(
     @InjectRepository(Message)
     private readonly repo: Repository<Message>,
+     private notificationsQueue: NotificationsQueue,
   ) {}
 
-  create(dto: CreateMessageDto) {
-    const msg = this.repo.create(dto as any);
-    return this.repo.save(msg);
-  }
+  async create(dto: CreateMessageDto) {
+  const msg = await this.repo.save(this.repo.create(dto));
+
+  await this.notificationsQueue.addNotification({
+    messageId: msg.id,
+    content: msg.content,
+  });
+
+  return msg;
+}
+
 
   findAll() {
     return this.repo.find({ order: { createdAt: 'DESC' } });
