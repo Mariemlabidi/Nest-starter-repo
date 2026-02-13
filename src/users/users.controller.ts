@@ -36,16 +36,16 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.usersService.findOne(id);
+  @Get('by-email/search')
+  findByEmail(@Query('email') email: string) {
+    return this.usersService.findByEmail(email);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @Get('by-email/search')
-  findByEmail(@Query('email') email: string) {
-    return this.usersService.findByEmail(email);
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.usersService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -57,4 +57,5 @@ export class UsersController {
     return this.usersService.update(user.id, body);
   }
 }
+
 

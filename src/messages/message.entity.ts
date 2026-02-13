@@ -1,5 +1,15 @@
 import { Attachment } from 'src/attachment/attachment.entity';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { User } from 'src/users/users.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 @Entity({ name: 'messages' })
 export class Message {
@@ -8,6 +18,22 @@ export class Message {
 
   @Column({ type: 'text' })
   content: string;
+
+  // Expéditeur du message
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'sender_id' })
+  sender: User;
+
+  @Column({ name: 'sender_id' })
+  senderId: number;
+
+  // Destinataire du message
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'recipient_id' })
+  recipient: User;
+
+  @Column({ name: 'recipient_id' })
+  recipientId: number;
 
   @OneToMany(() => Attachment, att => att.message, { cascade: true })
   attachments: Attachment[];
